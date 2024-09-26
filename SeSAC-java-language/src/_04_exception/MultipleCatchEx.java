@@ -1,5 +1,6 @@
 package _04_exception;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -77,3 +78,83 @@ class MultipleCatchExceptionEx_prac {
     }
 }
 
+class MultipleCatchExceptionEx_prac_2 {
+    public static void main(String[] args) {
+        try {
+            Scanner sc = new Scanner(System.in);
+
+            System.out.print("배열의 크기를 입력하십시오: ");
+            int size = sc.nextInt();
+
+            // 개행 문자 처리
+            sc.nextLine();
+
+            ArrayList<Integer> arr = new ArrayList<>();
+
+            String[] inputValues;
+            boolean validInput = false;
+
+            do {
+                System.out.println(size + "개의 배열 요소를 띄어쓰기로 구분하여 입력하십시오: ");
+                String input = sc.nextLine();
+                inputValues = input.split("\\s+");
+
+                if (inputValues.length != size) {
+                    System.out.println("입력한 숫자의 개수가 배열 크기와 일치하지 않습니다. \n");
+                } else {
+                    validInput = true;
+                }
+            } while (!validInput);
+
+            for (String value : inputValues) {
+                arr.add(Integer.parseInt(value));
+            }
+
+            ArrayList<ArrayList<Integer>> duplicates = findDuplicateArrays(arr);
+
+            if (duplicates.isEmpty()) {
+                System.out.println("중복된 숫자가 없습니다.");
+            } else {
+                System.out.println("중복된 숫자 서브 배열:");
+                for (int i = 0; i < duplicates.size(); i++) {
+                    System.out.print(duplicates.get(i));
+                    if (i < duplicates.size() - 1) {
+                        System.out.print(", ");
+                    }
+                }
+            }
+
+        } catch (InputMismatchException e) {
+            System.out.println("InputMismatchException 발생 >> " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("NumberFormatException 발생 >>" + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("알 수 없는 예외가 발생 >> " + e.getMessage());
+        }
+    }
+
+    // 중복된 요소 찾기
+    private static ArrayList<ArrayList<Integer>> findDuplicateArrays(ArrayList<Integer> arr) {
+        ArrayList<ArrayList<Integer>> duplicates = new ArrayList<>();
+        ArrayList<Integer> checked = new ArrayList<>();
+
+        for (int i = 0; i < arr.size(); i++) {
+            int count = 0;
+            ArrayList<Integer> subArray = new ArrayList<>();
+
+            for (int j = 0; j < arr.size(); j++) {
+                if (arr.get(i).equals(arr.get(j))) {
+                    count++;
+                    subArray.add(arr.get(i));
+                }
+            }
+
+            if (count > 1 && !checked.contains(arr.get(i))) {
+                duplicates.add(subArray);
+                checked.add(arr.get(i));
+            }
+        }
+
+        return duplicates;
+    }
+}
